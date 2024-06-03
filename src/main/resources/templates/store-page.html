@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Book store</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+</head>
+<body>
+<form th:action="@{/books}" method="get" onsubmit="return validateForm()">
+    <!-- Фильтры по цене -->
+    <div class="form-group">
+        <label>Минимальная цена</label>
+        <input id="minPrice" type="number" class="form-control form-control-sm" name="minPrice" th:value="${params['minPrice']}" />
+    </div>
+    <div class="form-group">
+        <label>Максимальная цена</label>
+        <input id="maxPrice" type="number" class="form-control form-control-sm" name="maxPrice" th:value="${params['maxPrice']}" />
+    </div>
+    <!-- Сортировка -->
+    <div class="form-group">
+        <label>Сортировка по цене</label>
+        <select class="form-control form-control-sm" name="sortOrder">
+            <option value="asc" th:selected="${params['sortOrder']} == 'asc'">По возрастанию</option>
+            <option value="desc" th:selected="${params['sortOrder']} == 'desc'">По убыванию</option>
+        </select>
+    </div>
+    <!-- Фильтры по жанру -->
+    <div class="form-group">
+        <label>Жанры</label>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="genre" value="FANTASY" th:checked="${params['genre'] != null && #lists.contains(params['genre'], 'FANTASY')}">
+            <label class="form-check-label">Фэнтези</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="genre" value="FICTION" th:checked="${params['genre'] != null && #lists.contains(params['genre'], 'FICTION')}">
+            <label class="form-check-label">Фантастика</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="genre" value="DETECTIVE" th:checked="${params['genre'] != null && #lists.contains(params['genre'], 'DETECTIVE')}">
+            <label class="form-check-label">Детектив</label>
+        </div>
+    </div>
+    <!-- Номер страницы -->
+    <input type="hidden" name="p" th:value="${currentPage}">
+    <!-- Кнопка отправки формы -->
+    <button type="submit" class="btn btn-primary">Применить</button>
+</form>
+
+<script>
+    function validateForm() {
+        var minPrice = document.getElementById("minPrice").value;
+        var maxPrice = document.getElementById("maxPrice").value;
+
+        if (minPrice === "") {
+            document.getElementById("minPrice").disabled = true;
+        }
+        if (maxPrice === "") {
+            document.getElementById("maxPrice").disabled = true;
+        }
+
+        // Обработка выбранных жанров
+        var selectedGenres = Array.from(document.querySelectorAll('input[name="genre"]:checked')).map(function(el) {
+            return el.value;
+        }).join(',');
+        document.querySelector('input[name="selectedGenres"]').value = selectedGenres;
+
+        return true;
+    }
+</script>
+
+
+<br>
+<h4>Список книг:</h4>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <td>Название</td>
+        <td>Описание</td>
+        <td>Цена</td>
+        <td>Год публикации</td>
+        <td>Жанр</td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="b : ${books}">
+        <td th:text="${b.title}"></td>
+        <td th:text="${b.description}"></td>
+        <td th:text="${b.price}"></td>
+        <td th:text="${b.yearOfPublication}"></td>
+        <td th:text="${b.genre}"></td>
+    </tr>
+    </tbody>
+</table>
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
+            <a class="page-link" th:href="@{/books(minPrice=${param.minPrice != null ? param.minPrice : null}, maxPrice=${param.maxPrice != null ? param.maxPrice : null}, sortOrder=${param.sortOrder}, p=${currentPage - 1}, genre=${param.genre})}" href="#">Previous</a>
+        </li>
+        <li class="page-item" th:each="i : ${#numbers.sequence(startPage, endPage)}" th:classappend="${i == currentPage} ? 'active'">
+            <a class="page-link" th:href="@{/books(minPrice=${param.minPrice != null ? param.minPrice : null}, maxPrice=${param.maxPrice != null ? param.maxPrice : null}, sortOrder=${param.sortOrder}, p=${i}, genre=${param.genre})}" th:text="${i}" href="#"></a>
+        </li>
+        <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
+            <a class="page-link" th:href="@{/books(minPrice=${param.minPrice != null ? param.minPrice : null}, maxPrice=${param.maxPrice != null ? param.maxPrice : null}, sortOrder=${param.sortOrder}, p=${currentPage + 1}, genre=${param.genre})}" href="#">Next</a>
+        </li>
+    </ul>
+</nav>
+</body>
+</html>
