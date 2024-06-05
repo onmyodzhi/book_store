@@ -34,7 +34,7 @@ values ('Aleksandr', '$2y$10$5FwMjAm6KkeMroCFzSq1qOa.e2fFbvpvLRQy3EMIJS.eWvlSlth
 
 insert into users_roles (user_id, role_id)
 values (1, 1),
-       (1, 3);
+       (2, 2);
 
 create table books
 (
