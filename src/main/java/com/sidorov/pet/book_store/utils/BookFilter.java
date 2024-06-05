@@ -17,7 +17,7 @@ public class BookFilter {
     Specification<Book> spec;
     String sortOrder = "asc";
 
-    public BookFilter(Map<String,String> params) {
+    public BookFilter(Map<String, String> params) {
         spec = Specification.where(null);
         if (params.containsKey("maxPrice") && !params.get("maxPrice").isEmpty()) {
             spec = spec.and(BookSpecifications.priceLessOrEqualsThan(Integer.parseInt(params.get("maxPrice"))));

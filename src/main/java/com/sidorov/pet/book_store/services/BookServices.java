@@ -34,7 +34,7 @@ public class BookServices {
         Sort sort = Sort.by("price");
         if (sortOrder.equals("desc")) {
             sort = sort.descending();
-        }else{
+        } else {
             sort = sort.ascending();
         }
 

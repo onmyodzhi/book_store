@@ -1,5 +1,6 @@
 package com.sidorov.pet.book_store.controllers;
 
+import com.sidorov.pet.book_store.beans.Cart;
 import com.sidorov.pet.book_store.entities.Book;
 import com.sidorov.pet.book_store.services.BookServices;
 import com.sidorov.pet.book_store.utils.BookFilter;
@@ -21,6 +22,7 @@ import java.util.Map;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BookController {
 
+    Cart cart;
     BookServices bookServices;
 
     @GetMapping

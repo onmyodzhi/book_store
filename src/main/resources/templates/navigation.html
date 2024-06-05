@@ -20,6 +20,30 @@
                 <li class="nav-item" th:classappend="${activeTab == 'BookStore' ? 'active' : ''}">
                     <a class="nav-link" th:href="@{'/books'}">Книги</a>
                 </li>
+                <li class="nav-item" th:classappend="${activeTab == 'Profile' ? 'active' : ''}">
+                    <a class="nav-link" th:href="@{'/profile'}">Профиль</a>
+                </li>
+                <li sec:authorize="hasAnyRole('ADMIN', 'SUPERADMIN')" class="nav-item" th:classappend="${activeTab == 'Admin' ? 'active' : ''}">
+                    <a class="nav-link" th:href="@{'/admin'}">Админ-панель</a>
+                </li>
+
+                <li sec:authorize="isAnonymous()" class="nav-item">
+                    <form class="align-middle" th:action="@{/authenticate}" method="POST">
+                        <div class="input-group-prepend">
+                            <input id="navLoginField" class="form-control" type="text" placeholder="Имя пользователя" name="username"
+                                   aria-describedby="inputGroup-sizing-sm"style="margin-left: 10px;">
+                            <input id="navPasswordField" class="form-control" type="password" placeholder="Пароль" name="password"
+                                   aria-describedby="inputGroup-sizing-sm" style="margin-left: 10px;">
+                            <button id="navLoginSubmit" class="btn btn-outline-warning btn-sm" style="margin-left: 10px;" type="submit">Войти</button>
+                        </div>
+                    </form>
+                </li>
+
+                <li sec:authorize="isAuthenticated()" class="nav-item">
+                    <form th:action="@{/logout}" method="POST">
+                        <button id="navLogout" class="btn btn-outline-secondary" type="submit">Выйти</button>
+                    </form>
+                </li>
             </ul>
         </div>
     </nav>
