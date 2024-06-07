@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Cart Page</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div th:replace="~{navigation :: navigation(Cart)}"/>
+    <h1>Корзина</h1>
+
+    <div th:if="${not #lists.isEmpty(cart)}">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Year of Publication</th>
+                <th>Price</th>
+                <th>Genre</th>
+                <th>Quantity</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${cart}">
+                <td th:text="${item.book.title}"></td>
+                <td th:text="${item.book.description}"></td>
+                <td th:text="${item.book.yearOfPublication}"></td>
+                <td th:text="${item.book.price}"></td>
+                <td th:text="${item.book.genre}"></td>
+                <td>
+                    <form th:action="@{/cart/update}" method="post">
+                        <input type="hidden" name="bookId" th:value="${item.book.id}"/>
+                        <input type="number" name="quantity" th:value="${item.countBooks}" min="1"/>
+                        <button type="submit">Save</button>
+                    </form>
+                </td>
+                <td>
+                    <form th:action="@{/cart/delete}" method="post">
+                        <input type="hidden" name="bookId" th:value="${item.book.id}"/>
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div th:if="${#lists.isEmpty(cart)}">
+        <p>Корзина пуста</p>
+    </div>
+</div>
+</body>
+</html>

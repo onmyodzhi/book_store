@@ -20,7 +20,6 @@ import java.util.List;
 @Service
 @AllArgsConstructor(onConstructor_ = {@Autowired})
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Transactional(readOnly = true)
 public class BookServices {
 
     BookRepository bookRepository;
@@ -44,6 +43,10 @@ public class BookServices {
     public Book findBookById(Long id) {
         return bookRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Book with this id:" + id + " not found"));
+    }
+
+    public Book findBookByUserId(Long id) {
+        return bookRepository.findAllBooksByUserId(id);
     }
 
     @Transactional
