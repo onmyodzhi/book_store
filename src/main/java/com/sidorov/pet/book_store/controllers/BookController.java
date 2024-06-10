@@ -26,9 +26,13 @@ public class BookController {
     @GetMapping
     public String showAllBooks(Model model,
                                @RequestParam(name = "p", defaultValue = "1") Integer p,
-                               @RequestParam Map<String, String> params) {
+                               @RequestParam Map<String, String> params,
+                               @RequestParam(name = "genres", required = false) List<String> genres) {
+        if (genres != null && !genres.isEmpty()) {
+            params.put("genres", String.join(",", genres));
+        }
         BookFilter bookFilter = new BookFilter(params);
-        Page<Book> page = bookServices.getAllBooks(bookFilter, p - 1, 5, bookFilter.getSortOrder());
+        Page<Book> page = bookServices.getAllBooks(bookFilter, p - 1, 5, bookFilter.getFilterParams());
 
         int currentPage = p;
         int totalPages = page.getTotalPages();

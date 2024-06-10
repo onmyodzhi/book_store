@@ -1,8 +1,9 @@
 package com.sidorov.pet.book_store.repositories.specifications;
 
 import com.sidorov.pet.book_store.entities.Book;
-import com.sidorov.pet.book_store.enums.Genre;
 import org.springframework.data.jpa.domain.Specification;
+
+import java.util.List;
 
 public class BookSpecifications {
     public static Specification<Book> priceGreaterOrEqualsThan(int minPrice) {
@@ -17,7 +18,7 @@ public class BookSpecifications {
         return (root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.like(root.get("title"), String.format("%%%s%%", partOfTitle));
     }
 
-    public static Specification<Book> genreEquals(Genre genre) {
-        return (root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.equal(root.get("genre"), genre);
+    public static Specification<Book> genresIn(List<String> genres) {
+        return (root, criteriaQuery, criteriaBuilder) -> root.get("genre").in(genres);
     }
 }

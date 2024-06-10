@@ -11,7 +11,7 @@
 <body>
 <div class="container">
     <div th:replace="~{navigation :: navigation(Profile)}"/>
-    <form th:action="@{/books}" method="get" onsubmit="return validateForm()">
+    <form th:action="@{/books}" method="get">
         <!-- Фильтры по цене -->
         <div class="form-group">
             <label>Минимальная цена</label>
@@ -35,18 +35,18 @@
         <div class="form-group">
             <label>Жанры</label>
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="genre" value="FANTASY"
-                       th:checked="${params['genre'] != null && #lists.contains(params['genre'], 'FANTASY')}">
+                <input class="form-check-input" type="checkbox" name="genres" value="FANTASY"
+                       th:checked="${params['genres'] != null && #lists.contains(params['genres'], 'FANTASY')}">
                 <label class="form-check-label">Фэнтези</label>
             </div>
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="genre" value="FICTION"
-                       th:checked="${params['genre'] != null && #lists.contains(params['genre'], 'FICTION')}">
+                <input class="form-check-input" type="checkbox" name="genres" value="FICTION"
+                       th:checked="${params['genres'] != null && #lists.contains(params['genres'], 'FICTION')}">
                 <label class="form-check-label">Фантастика</label>
             </div>
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="genre" value="DETECTIVE"
-                       th:checked="${params['genre'] != null && #lists.contains(params['genre'], 'DETECTIVE')}">
+                <input class="form-check-input" type="checkbox" name="genres" value="DETECTIVE"
+                       th:checked="${params['genres'] != null && #lists.contains(params['genres'], 'DETECTIVE')}">
                 <label class="form-check-label">Детектив</label>
             </div>
         </div>
@@ -93,18 +93,18 @@
         <ul class="pagination">
             <li class="page-item" th:classappend="${currentPage == 1} ? 'disabled'">
                 <a class="page-link"
-                   th:href="@{/books(minPrice=${param.minPrice != null ? param.minPrice : null}, maxPrice=${param.maxPrice != null ? param.maxPrice : null}, sortOrder=${param.sortOrder}, p=${currentPage - 1}, genre=${param.genre})}"
+                   th:href="@{/books(minPrice=${param.minPrice != null ? param.minPrice : null}, maxPrice=${param.maxPrice != null ? param.maxPrice : null}, sortOrder=${param.sortOrder}, p=${currentPage - 1}, genres=${param.genres})}"
                    href="#">Previous</a>
             </li>
             <li class="page-item" th:each="i : ${#numbers.sequence(startPage, endPage)}"
                 th:classappend="${i == currentPage} ? 'active'">
                 <a class="page-link"
-                   th:href="@{/books(minPrice=${param.minPrice != null ? param.minPrice : null}, maxPrice=${param.maxPrice != null ? param.maxPrice : null}, sortOrder=${param.sortOrder}, p=${i}, genre=${param.genre})}"
+                   th:href="@{/books(minPrice=${param.minPrice != null ? param.minPrice : null}, maxPrice=${param.maxPrice != null ? param.maxPrice : null}, sortOrder=${param.sortOrder}, p=${i}, genres=${param.genres})}"
                    th:text="${i}" href="#"></a>
             </li>
             <li class="page-item" th:classappend="${currentPage == totalPages} ? 'disabled'">
                 <a class="page-link"
-                   th:href="@{/books(minPrice=${param.minPrice != null ? param.minPrice : null}, maxPrice=${param.maxPrice != null ? param.maxPrice : null}, sortOrder=${param.sortOrder}, p=${currentPage + 1}, genre=${param.genre})}"
+                   th:href="@{/books(minPrice=${param.minPrice != null ? param.minPrice : null}, maxPrice=${param.maxPrice != null ? param.maxPrice : null}, sortOrder=${param.sortOrder}, p=${currentPage + 1}, genres=${param.genres})}"
                    href="#">Next</a>
             </li>
         </ul>

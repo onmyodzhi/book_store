@@ -1,13 +1,14 @@
 package com.sidorov.pet.book_store.utils;
 
 import com.sidorov.pet.book_store.entities.Book;
-import com.sidorov.pet.book_store.enums.Genre;
 import com.sidorov.pet.book_store.repositories.specifications.BookSpecifications;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -15,30 +16,44 @@ import java.util.Map;
 public class BookFilter {
 
     Specification<Book> spec;
-    String sortOrder = "asc";
+    final String filterParams;
 
     public BookFilter(Map<String, String> params) {
         spec = Specification.where(null);
-        if (params.containsKey("maxPrice") && !params.get("maxPrice").isEmpty()) {
-            spec = spec.and(BookSpecifications.priceLessOrEqualsThan(Integer.parseInt(params.get("maxPrice"))));
-        }
-        if (params.containsKey("minPrice") && !params.get("minPrice").isEmpty()) {
-            spec = spec.and(BookSpecifications.priceGreaterOrEqualsThan(Integer.parseInt(params.get("minPrice"))));
-        }
-        if (params.containsKey("partOfTitle") && !params.get("partOfTitle").isEmpty()) {
-            spec = spec.and(BookSpecifications.titleLike(params.get("partOfTitle")));
-        }
-        if (params.containsKey("sortOrder") && !params.get("sortOrder").isEmpty()) {
-            sortOrder = params.get("sortOrder");
-        }
-        if (params.containsKey("genre") && !params.get("genre").isEmpty()) {
-            String[] genres = params.get("genre").split(",");
-            Specification<Book> genreSpec = Specification.where(null);
-            for (String genre : genres) {
-                genreSpec = genreSpec.or(BookSpecifications.genreEquals(Genre.valueOf(genre)));
-            }
-            spec = spec.and(genreSpec);
+        StringBuilder paramsBuilder = new StringBuilder();
+
+        String maxPriceParam = params.get("maxPrice");
+        if (maxPriceParam != null && !maxPriceParam.isEmpty()) {
+            int maxPrice = Integer.parseInt(maxPriceParam);
+            spec = spec.and(BookSpecifications.priceLessOrEqualsThan(maxPrice));
+            paramsBuilder.append("&maxPrice=").append(maxPrice);
         }
 
+        String minPriceParam = params.get("minPrice");
+        if (minPriceParam != null && !minPriceParam.isEmpty()) {
+            int minPrice = Integer.parseInt(minPriceParam);
+            spec = spec.and(BookSpecifications.priceGreaterOrEqualsThan(minPrice));
+            paramsBuilder.append("&minPrice=").append(minPrice);
+        }
+
+        String partOfTitleParam = params.get("partOfTitle");
+        if (partOfTitleParam != null && !partOfTitleParam.isEmpty()) {
+            spec = spec.and(BookSpecifications.titleLike(partOfTitleParam));
+            paramsBuilder.append("&partOfTitle=").append(partOfTitleParam);
+        }
+
+        String sortOrderParam = params.get("sortOrder");
+        if (sortOrderParam != null && !sortOrderParam.isEmpty()) {
+            paramsBuilder.append("&sortOrder=").append(sortOrderParam);
+        }
+
+        String genresParam = params.get("genres");
+        if (genresParam != null && !genresParam.isEmpty()) {
+            List<String> genres = Arrays.asList(genresParam.split(","));
+            spec = spec.and(BookSpecifications.genresIn(genres));
+            paramsBuilder.append("&genres=").append(String.join(",", genres));
+        }
+
+        filterParams = paramsBuilder.toString();
     }
 }
