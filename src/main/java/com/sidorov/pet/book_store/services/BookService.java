@@ -31,7 +31,7 @@ public class BookService {
     public Page<Book> getAllBooks(BookFilter bookFilter, int page, int size, String sortOrder) {
         Specification<Book> spec = bookFilter.getSpec();
         Sort sort = Sort.by("price");
-        if (sortOrder.equals("desc")) {
+        if (sortOrder.contains("&sortOrder=desc")) {
             sort = sort.descending();
         } else {
             sort = sort.ascending();
