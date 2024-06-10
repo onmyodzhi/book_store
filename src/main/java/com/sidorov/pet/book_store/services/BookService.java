@@ -20,7 +20,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor(onConstructor_ = {@Autowired})
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BookServices {
+public class BookService {
 
     BookRepository bookRepository;
 

@@ -28,6 +28,10 @@
                     th:classappend="${activeTab == 'Cart' ? 'active' : ''}">
                     <a class="nav-link" th:href="@{'/cart'}">Корзина</a>
                 </li>
+                <li sec:authorize="isAuthenticated()" class="nav-item"
+                    th:classappend="${activeTab == 'Order' ? 'active' : ''}">
+                    <a class="nav-link" th:href="@{'/order'}">Покупки</a>
+                </li>
                 <li sec:authorize="hasAnyRole('ADMIN', 'SUPERADMIN')" class="nav-item"
                     th:classappend="${activeTab == 'Admin' ? 'active' : ''}">
                     <a class="nav-link" th:href="@{'/admin'}">Админ-панель</a>

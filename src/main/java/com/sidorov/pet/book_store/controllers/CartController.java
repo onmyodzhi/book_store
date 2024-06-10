@@ -34,10 +34,11 @@ public class CartController {
         Long userId = userService.getUserByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"))
                 .getId();
-        List<Cart> cart = cartService.getCart(userId);
+        List<Cart> cart = cartService.getAllCartByUserId(userId);
         model.addAttribute("cart", cart);
         return "cart-page";
     }
+
     @PostMapping("/add")
     public String addToCart(@AuthenticationPrincipal UserDetails userDetails, @RequestParam Long bookId) {
         if (userDetails == null) {

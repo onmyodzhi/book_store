@@ -10,6 +10,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -18,10 +19,10 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CartService {
     CartRepository cartRepository;
-    BookServices bookServices;
+    BookService bookServices;
     UserService userService;
 
-    public List<Cart> getCart(Long id) {
+    public List<Cart> getAllCartByUserId(Long id) {
         return cartRepository.findCartByUserId(id).orElse(null);
     }
 
@@ -29,7 +30,7 @@ public class CartService {
         Cart cart = cartRepository.findCartByUserUsernameAndBookId(username, bookId);
         if (cart == null) {
             cart = cartFilling(username, bookId);
-        }else
+        } else
             cart.setCountBooks(countBook);
         saveOrUpdate(cart);
     }
@@ -51,6 +52,11 @@ public class CartService {
         if (cart != null) {
             cartRepository.delete(cart);
         }
+    }
+
+    @Transactional
+    public void deleteAll(List<Cart> cart) {
+        cartRepository.deleteAll(cart);
     }
 
     private void saveOrUpdate(Cart cart) {

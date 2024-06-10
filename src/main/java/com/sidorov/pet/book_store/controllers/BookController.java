@@ -1,7 +1,7 @@
 package com.sidorov.pet.book_store.controllers;
 
 import com.sidorov.pet.book_store.entities.Book;
-import com.sidorov.pet.book_store.services.BookServices;
+import com.sidorov.pet.book_store.services.BookService;
 import com.sidorov.pet.book_store.utils.BookFilter;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -21,7 +21,7 @@ import java.util.Map;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BookController {
 
-    BookServices bookServices;
+    BookService bookServices;
 
     @GetMapping
     public String showAllBooks(Model model,

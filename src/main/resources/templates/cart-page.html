@@ -50,6 +50,11 @@
             </tr>
             </tbody>
         </table>
+        <div class="text-right">
+            <form th:action="@{/order/add}" method="post">
+                <button type="submit" class="btn btn-success">Оформить заказ</button>
+            </form>
+        </div>
     </div>
     <div th:if="${#lists.isEmpty(cart)}">
         <p>Корзина пуста</p>
