@@ -1,6 +1,7 @@
-package com.sidorov.pet.book_store.controllers;
+package com.sidorov.pet.book_store.controllers.ui.implementations;
 
-import com.sidorov.pet.book_store.entities.Book;
+import com.sidorov.pet.book_store.controllers.ui.interfaces.BookController;
+import com.sidorov.pet.book_store.entities.dto.BookDTO;
 import com.sidorov.pet.book_store.services.BookService;
 import com.sidorov.pet.book_store.utils.BookFilter;
 import lombok.AccessLevel;
@@ -10,7 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Map;
@@ -19,11 +21,11 @@ import java.util.Map;
 @RequestMapping("/books")
 @AllArgsConstructor(onConstructor_ = {@Autowired})
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BookController {
+public class BookControllerImpl implements BookController {
 
-    BookService bookServices;
+    BookService bookService;
 
-    @GetMapping
+    @Override
     public String showAllBooks(Model model,
                                @RequestParam(name = "p", defaultValue = "1") Integer p,
                                @RequestParam Map<String, String> params,
@@ -32,7 +34,7 @@ public class BookController {
             params.put("genres", String.join(",", genres));
         }
         BookFilter bookFilter = new BookFilter(params);
-        Page<Book> page = bookServices.getAllBooks(bookFilter, p - 1, 5, bookFilter.getFilterParams());
+        Page<BookDTO> page = bookService.getPageOfBooks(bookFilter, p - 1, 5, bookFilter.getFilterParams());
 
         int currentPage = p;
         int totalPages = page.getTotalPages();
@@ -59,12 +61,5 @@ public class BookController {
         model.addAttribute("endPage", endPage);
         model.addAttribute("params", params);
         return "store-page";
-    }
-
-    @GetMapping("/rest")
-    @ResponseBody
-    @CrossOrigin("*")
-    public List<Book> showAllBooks() {
-        return bookServices.getAllBooks();
     }
 }

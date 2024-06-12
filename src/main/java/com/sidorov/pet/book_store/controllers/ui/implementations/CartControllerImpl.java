@@ -1,6 +1,7 @@
-package com.sidorov.pet.book_store.controllers;
+package com.sidorov.pet.book_store.controllers.ui.implementations;
 
-import com.sidorov.pet.book_store.entities.Cart;
+import com.sidorov.pet.book_store.controllers.ui.interfaces.CartController;
+import com.sidorov.pet.book_store.entities.dto.CartDTO;
 import com.sidorov.pet.book_store.services.CartService;
 import com.sidorov.pet.book_store.services.UserService;
 import lombok.AccessLevel;
@@ -12,7 +13,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -20,12 +22,12 @@ import java.util.List;
 @RequestMapping("/cart")
 @AllArgsConstructor(onConstructor_ = {@Autowired})
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CartController {
+public class CartControllerImpl implements CartController {
 
     CartService cartService;
     UserService userService;
 
-    @GetMapping
+    @Override
     public String showCart(Model model, @AuthenticationPrincipal UserDetails userDetails) {
         if (userDetails == null) {
             return "redirect:/login";
@@ -34,12 +36,12 @@ public class CartController {
         Long userId = userService.getUserByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"))
                 .getId();
-        List<Cart> cart = cartService.getAllCartByUserId(userId);
-        model.addAttribute("cart", cart);
+        List<CartDTO> cartDTOs = cartService.getAllCartByUserId(userId);
+        model.addAttribute("cart", cartDTOs);
         return "cart-page";
     }
 
-    @PostMapping("/add")
+    @Override
     public String addToCart(@AuthenticationPrincipal UserDetails userDetails, @RequestParam Long bookId) {
         if (userDetails == null) {
             return "redirect:/login";
@@ -50,8 +52,9 @@ public class CartController {
         return "redirect:/cart";
     }
 
-    @PostMapping("/update")
-    public String updateCart(@AuthenticationPrincipal UserDetails userDetails, @RequestParam Long bookId, @RequestParam Integer quantity) {
+    @Override
+    public String updateCart(@AuthenticationPrincipal UserDetails userDetails,
+                             @RequestParam Long bookId, @RequestParam Integer quantity) {
         if (userDetails == null) {
             return "redirect:/login";
         }
@@ -61,7 +64,7 @@ public class CartController {
         return "redirect:/cart";
     }
 
-    @PostMapping("/delete")
+    @Override
     public String deleteCart(@AuthenticationPrincipal UserDetails userDetails, @RequestParam Long bookId) {
         if (userDetails == null) {
             return "redirect:/login";

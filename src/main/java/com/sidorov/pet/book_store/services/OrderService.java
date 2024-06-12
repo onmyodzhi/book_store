@@ -4,6 +4,14 @@ import com.sidorov.pet.book_store.entities.Book;
 import com.sidorov.pet.book_store.entities.Cart;
 import com.sidorov.pet.book_store.entities.Order;
 import com.sidorov.pet.book_store.entities.User;
+import com.sidorov.pet.book_store.entities.dto.BookDTO;
+import com.sidorov.pet.book_store.entities.dto.CartDTO;
+import com.sidorov.pet.book_store.entities.dto.OrderDTO;
+import com.sidorov.pet.book_store.entities.dto.UserDTO;
+import com.sidorov.pet.book_store.entities.mappers.BookMapper;
+import com.sidorov.pet.book_store.entities.mappers.CartMapper;
+import com.sidorov.pet.book_store.entities.mappers.OrderMapper;
+import com.sidorov.pet.book_store.entities.mappers.UserMapper;
 import com.sidorov.pet.book_store.repositories.OrderRepository;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -21,18 +29,26 @@ import java.util.List;
 public class OrderService {
 
     OrderRepository orderRepository;
+    OrderMapper orderMapper;
     CartService cartService;
+    CartMapper cartMapper;
+    UserMapper userMapper;
+    BookMapper bookMapper;
 
-    public List<Order> findAll() {
-        return orderRepository.findAll();
+    public List<OrderDTO> findAll() {
+        return orderRepository.findAll()
+                .stream().map(entity -> orderMapper.toDTO(entity)).toList();
     }
 
-    public List<Order> findAllByUserId(Long id) {
-        return orderRepository.findAllByUserId(id);
+    public List<OrderDTO> findAllByUserId(Long id) {
+        return orderRepository.findAllByUserId(id)
+                .stream().map(entity -> orderMapper.toDTO(entity)).toList();
     }
 
-    public void save(User user, Book book, Integer count) {
+    public void save(UserDTO userDTO, BookDTO bookDTO, Integer count) {
         Order order = new Order();
+        User user = userMapper.toEntity(userDTO);
+        Book book = bookMapper.toEntity(bookDTO);
 
         order.setUser(user);
         order.setBook(book);
@@ -43,12 +59,14 @@ public class OrderService {
     }
 
     @Transactional
-    public void saveAllFromCart(List<Cart> cart) {
+    public void saveAllFromCart(List<CartDTO> cartDTOs) {
         List<Order> orders = new ArrayList<>();
 
         User user;
         Book book;
         int bookCount = 0;
+        List<Cart> cart = cartDTOs.stream().map(dto -> cartMapper.toEntity(dto)).toList();
+
         for (Cart value : cart) {
             Order order = new Order();
 
@@ -65,15 +83,18 @@ public class OrderService {
         }
 
         orderRepository.saveAll(orders);
-        cartService.deleteAll(cart);
+        cartService.deleteAll(cart.stream().map(entity -> cartMapper.toDTO(entity)).toList());
     }
 
-    public Order findById(Long id) {
-        return orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found"));
+    public OrderDTO findById(Long id) {
+        Order order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found"));
+        return orderMapper.toDTO(order);
     }
 
-    public Order saveOrUpdate(Order order) {
-        return orderRepository.save(order);
+    public OrderDTO saveOrUpdate(OrderDTO orderDTO) {
+        Order order = orderMapper.toEntity(orderDTO);
+        orderRepository.save(order);
+        return orderMapper.toDTO(order);
     }
 
     public void deleteById(Long id) {

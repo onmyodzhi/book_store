@@ -1,8 +1,9 @@
-package com.sidorov.pet.book_store.controllers;
+package com.sidorov.pet.book_store.controllers.ui.implementations;
 
-import com.sidorov.pet.book_store.entities.Cart;
-import com.sidorov.pet.book_store.entities.Order;
-import com.sidorov.pet.book_store.entities.User;
+import com.sidorov.pet.book_store.controllers.ui.interfaces.OrderController;
+import com.sidorov.pet.book_store.entities.dto.CartDTO;
+import com.sidorov.pet.book_store.entities.dto.OrderDTO;
+import com.sidorov.pet.book_store.entities.dto.UserDTO;
 import com.sidorov.pet.book_store.services.CartService;
 import com.sidorov.pet.book_store.services.OrderService;
 import com.sidorov.pet.book_store.services.UserService;
@@ -15,8 +16,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
@@ -25,35 +24,35 @@ import java.util.List;
 @RequestMapping("/order")
 @AllArgsConstructor(onConstructor_ = {@Autowired})
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class OrderController {
+public class OrderControllerImpl implements OrderController {
 
     OrderService orderService;
     CartService cartService;
     UserService userService;
 
-    @GetMapping
+    @Override
     public String getAllOrders(Model model, @AuthenticationPrincipal UserDetails userDetails) {
         if (userDetails == null) {
             return "redirect:/login";
         }
 
-        User user = userService.getUserByUsername(userDetails.getUsername())
+        UserDTO user = userService.getUserByUsername(userDetails.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        List<Order> orders = orderService.findAllByUserId(user.getId());
+        List<OrderDTO> orders = orderService.findAllByUserId(user.getId());
         model.addAttribute("orders", orders);
         return "order-page";
     }
 
-    @PostMapping("/add")
+    @Override
     public String addOrder(@AuthenticationPrincipal UserDetails userDetails) {
         if (userDetails == null) {
             return "redirect:/login";
         }
 
-        User user = userService.getUserByUsername(userDetails.getUsername())
+        UserDTO user = userService.getUserByUsername(userDetails.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        List<Cart> orderItems = cartService.getAllCartByUserId(user.getId());
+        List<CartDTO> orderItems = cartService.getAllCartByUserId(user.getId());
 
         orderService.saveAllFromCart(orderItems);
         return "redirect:/order";
