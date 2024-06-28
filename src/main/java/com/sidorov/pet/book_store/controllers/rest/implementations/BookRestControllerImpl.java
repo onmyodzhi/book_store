@@ -2,14 +2,18 @@ package com.sidorov.pet.book_store.controllers.rest.implementations;
 
 import com.sidorov.pet.book_store.controllers.rest.interfaces.BookRestController;
 import com.sidorov.pet.book_store.entities.dto.BookDTO;
+import com.sidorov.pet.book_store.exceptions.BookServiceError;
 import com.sidorov.pet.book_store.exceptions.ResourceNotFoundException;
 import com.sidorov.pet.book_store.services.BookService;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
